@@ -1,7 +1,7 @@
-import { DatePipe, CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
 import { ArticleDetail } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
 import { API_BASE } from '../../core/config';
@@ -9,12 +9,12 @@ import { API_BASE } from '../../core/config';
 @Component({
   selector: 'app-blog-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, ImgFallbackDirective, DatePipe],
+  imports: [RouterLink, ImgFallbackDirective, DatePipe],
   template: `
     <section class="section">
       <div class="container narrow">
         <a routerLink="/blog" class="back">← Volver al blog</a>
-        @if (article(); as a) {
+        @if (article.value(); as a) {
           <img class="cover" [src]="a.featuredImageUrl" [fallback]="a.slug" [alt]="a.title" />
           <span class="badge">{{ a.category }}</span>
           <h1>{{ a.title }}</h1>
@@ -36,15 +36,11 @@ import { API_BASE } from '../../core/config';
   `
 })
 export class BlogDetail {
-  private readonly http = inject(HttpClient);
   private readonly route = inject(ActivatedRoute);
-  protected readonly article = signal<ArticleDetail | null>(null);
+  private readonly slug = signal(this.route.snapshot.paramMap.get('slug') ?? '');
 
-  constructor() {
-    const slug = this.route.snapshot.paramMap.get('slug');
-    if (slug) {
-      this.http.get<ArticleDetail>(`${API_BASE}/api/content/articles/${slug}`)
-        .subscribe(a => this.article.set(a));
-    }
-  }
+  // El resource se dispara/recalcula según el slug (reactivo).
+  protected readonly article = httpResource<ArticleDetail>(
+    () => this.slug() ? `${API_BASE}/api/content/articles/${this.slug()}` : undefined,
+  );
 }

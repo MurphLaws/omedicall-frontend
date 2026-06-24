@@ -1,7 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
 import { Specialty } from '../../core/models/models';
 import { SpecialtyIcon } from '../../shared/specialty-icon';
 import { API_BASE } from '../../core/config';
@@ -9,7 +8,7 @@ import { API_BASE } from '../../core/config';
 @Component({
   selector: 'app-specialties',
   standalone: true,
-  imports: [CommonModule, RouterLink, SpecialtyIcon],
+  imports: [RouterLink, SpecialtyIcon],
   template: `
     <section class="page-head">
       <div class="container">
@@ -22,7 +21,7 @@ import { API_BASE } from '../../core/config';
     <section class="section" style="padding-top:0">
       <div class="container">
         <div class="grid cols-3">
-          @for (s of items(); track s.id) {
+          @for (s of specialties.value(); track s.id) {
             <a routerLink="/medicos" class="card hoverable spec">
               <span class="icon-tile"><app-specialty-icon [key]="s.iconKey" /></span>
               <div>
@@ -57,11 +56,8 @@ import { API_BASE } from '../../core/config';
   `,
 })
 export class Specialties {
-  private readonly http = inject(HttpClient);
-  protected readonly items = signal<Specialty[]>([]);
-
-  constructor() {
-    this.http.get<Specialty[]>(`${API_BASE}/api/catalog/specialties`)
-      .subscribe(d => this.items.set(d));
-  }
+  // Data fetching declarativo con httpResource() (Angular 21).
+  protected readonly specialties = httpResource<Specialty[]>(
+    () => `${API_BASE}/api/catalog/specialties`, { defaultValue: [] as Specialty[] },
+  );
 }

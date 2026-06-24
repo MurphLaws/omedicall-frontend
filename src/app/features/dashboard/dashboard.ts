@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { AuthStore } from '../../core/auth/auth.store';
 import { NotificationDto } from '../../core/models/models';
 import { API_BASE } from '../../core/config';
@@ -8,7 +8,7 @@ import { API_BASE } from '../../core/config';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [DatePipe],
   template: `
     <section class="section">
       <div class="container">
@@ -20,7 +20,7 @@ import { API_BASE } from '../../core/config';
         <div class="grid cols-2" style="margin-top:1.5rem">
           <div class="card pad">
             <h3>Notificaciones</h3>
-            @for (n of notifications(); track n.id) {
+            @for (n of notifications.value(); track n.id) {
               <div class="notif" [class.unread]="!n.isRead">
                 <div>
                   <strong>{{ n.title }}</strong>
@@ -40,7 +40,7 @@ import { API_BASE } from '../../core/config';
             <h3>Tu actividad</h3>
             <p class="muted">
               Aquí verás tus próximas citas y tu historial cuando esas funcionalidades estén
-              disponibles. Por ahora puedes explorar especialidades, médicos y el blog.
+              disponibles. Por ahora puedes explorar especialidades, médicos, sedes y el blog.
             </p>
           </div>
         </div>
@@ -60,19 +60,15 @@ import { API_BASE } from '../../core/config';
 export class Dashboard {
   protected readonly auth = inject(AuthStore);
   private readonly http = inject(HttpClient);
-  protected readonly notifications = signal<NotificationDto[]>([]);
 
-  constructor() {
-    this.load();
-  }
+  // Lectura declarativa con httpResource(); el token lo adjunta el interceptor.
+  protected readonly notifications = httpResource<NotificationDto[]>(
+    () => `${API_BASE}/api/notifications/me`, { defaultValue: [] as NotificationDto[] },
+  );
 
-  private load(): void {
-    this.http.get<NotificationDto[]>(`${API_BASE}/api/notifications/me`)
-      .subscribe(d => this.notifications.set(d));
-  }
-
+  // Mutación imperativa (POST) + recarga del resource.
   protected markRead(id: string): void {
     this.http.post<void>(`${API_BASE}/api/notifications/${id}/read`, {})
-      .subscribe(() => this.load());
+      .subscribe(() => this.notifications.reload());
   }
 }

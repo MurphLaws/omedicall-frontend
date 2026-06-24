@@ -1,13 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { httpResource } from '@angular/common/http';
 import { ArticleSummary, DoctorSummary, Specialty } from '../../core/models/models';
 import { API_BASE } from '../../core/config';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule],
   template: `
     <section class="section">
       <div class="container">
@@ -15,9 +13,9 @@ import { API_BASE } from '../../core/config';
         <p class="muted">Vista de solo lectura de los datos cargados en la plataforma.</p>
 
         <div class="grid cols-3" style="margin:1.25rem 0 2rem">
-          <div class="card pad stat"><span class="n">{{ specialties().length }}</span><span class="l">Especialidades</span></div>
-          <div class="card pad stat"><span class="n">{{ doctors().length }}</span><span class="l">Médicos</span></div>
-          <div class="card pad stat"><span class="n">{{ articles().length }}</span><span class="l">Artículos</span></div>
+          <div class="card pad stat"><span class="n">{{ specialties.value().length }}</span><span class="l">Especialidades</span></div>
+          <div class="card pad stat"><span class="n">{{ doctors.value().length }}</span><span class="l">Médicos</span></div>
+          <div class="card pad stat"><span class="n">{{ articles.value().length }}</span><span class="l">Artículos</span></div>
         </div>
 
         <div class="card pad">
@@ -25,7 +23,7 @@ import { API_BASE } from '../../core/config';
           <table class="tbl">
             <thead><tr><th>Nombre</th><th>Especialidad</th><th>Sede</th><th>Rating</th></tr></thead>
             <tbody>
-              @for (d of doctors(); track d.id) {
+              @for (d of doctors.value(); track d.id) {
                 <tr>
                   <td>{{ d.fullName }}</td>
                   <td>{{ d.primarySpecialtyName }}</td>
@@ -49,17 +47,14 @@ import { API_BASE } from '../../core/config';
   `
 })
 export class Admin {
-  private readonly http = inject(HttpClient);
-  protected readonly specialties = signal<Specialty[]>([]);
-  protected readonly doctors = signal<DoctorSummary[]>([]);
-  protected readonly articles = signal<ArticleSummary[]>([]);
-
-  constructor() {
-    this.http.get<Specialty[]>(`${API_BASE}/api/catalog/specialties`)
-      .subscribe(d => this.specialties.set(d));
-    this.http.get<DoctorSummary[]>(`${API_BASE}/api/providers`)
-      .subscribe(d => this.doctors.set(d));
-    this.http.get<ArticleSummary[]>(`${API_BASE}/api/content/articles`)
-      .subscribe(d => this.articles.set(d));
-  }
+  // Lecturas declarativas con httpResource() (Angular 21).
+  protected readonly specialties = httpResource<Specialty[]>(
+    () => `${API_BASE}/api/catalog/specialties`, { defaultValue: [] as Specialty[] },
+  );
+  protected readonly doctors = httpResource<DoctorSummary[]>(
+    () => `${API_BASE}/api/providers`, { defaultValue: [] as DoctorSummary[] },
+  );
+  protected readonly articles = httpResource<ArticleSummary[]>(
+    () => `${API_BASE}/api/content/articles`, { defaultValue: [] as ArticleSummary[] },
+  );
 }

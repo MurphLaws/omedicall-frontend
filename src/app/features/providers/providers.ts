@@ -1,6 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { httpResource } from '@angular/common/http';
 import { DoctorSummary } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
 import { doctorPhoto, isFemaleName } from '../../shared/stock-images';
@@ -9,20 +8,20 @@ import { API_BASE } from '../../core/config';
 @Component({
   selector: 'app-providers',
   standalone: true,
-  imports: [CommonModule, ImgFallbackDirective],
+  imports: [ImgFallbackDirective],
   template: `
     <section class="page-head">
       <div class="container">
         <span class="eyebrow">Directorio médico</span>
         <h1>Encuentra a tu especialista</h1>
-        <p class="lead">{{ items().length }} profesionales verificados, listos para atenderte presencial o por telemedicina.</p>
+        <p class="lead">{{ doctors.value().length }} profesionales verificados, listos para atenderte presencial o por telemedicina.</p>
       </div>
     </section>
 
     <section class="section" style="padding-top:0">
       <div class="container">
         <div class="grid cols-3">
-          @for (d of items(); track d.id) {
+          @for (d of doctors.value(); track d.id) {
             <div class="card hoverable doc">
               <div class="doc-photo">
                 <img [src]="photo(d)" [fallback]="'doc-' + d.id" [alt]="d.fullName" />
@@ -79,13 +78,10 @@ import { API_BASE } from '../../core/config';
   `,
 })
 export class Providers {
-  private readonly http = inject(HttpClient);
-  protected readonly items = signal<DoctorSummary[]>([]);
-
-  constructor() {
-    this.http.get<DoctorSummary[]>(`${API_BASE}/api/providers`)
-      .subscribe(d => this.items.set(d));
-  }
+  // Data fetching declarativo con httpResource() (Angular 21).
+  protected readonly doctors = httpResource<DoctorSummary[]>(
+    () => `${API_BASE}/api/providers`, { defaultValue: [] as DoctorSummary[] },
+  );
 
   protected photo(d: DoctorSummary): string {
     return doctorPhoto(d.id, isFemaleName(d.fullName));

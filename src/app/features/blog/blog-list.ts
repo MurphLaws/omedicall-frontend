@@ -1,12 +1,14 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '../../core/http/api.service';
+import { httpResource } from '@angular/common/http';
 import { ArticleSummary } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
+import { API_BASE } from '../../core/config';
 
 @Component({
   selector: 'app-blog-list',
+  standalone: true,
   imports: [RouterLink, ImgFallbackDirective, DatePipe],
   template: `
     <section class="section">
@@ -15,8 +17,8 @@ import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
         <p class="muted">Consejos y guías escritas por nuestros especialistas.</p>
 
         <div class="grid cols-3" style="margin-top:1.5rem">
-          @for (a of items(); track a.id) {
-            <a class="card post" [routerLink]="['/blog', a.slug]">
+          @for (a of articles.value(); track a.id) {
+            <a class="card post hoverable" [routerLink]="['/blog', a.slug]">
               <img class="cover" [src]="a.featuredImageUrl" [fallback]="a.slug" [alt]="a.title" />
               <div class="pad">
                 <span class="badge">{{ a.category }}</span>
@@ -40,10 +42,8 @@ import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
   `
 })
 export class BlogList {
-  private readonly api = inject(HttpClient);
-  protected readonly items = signal<ArticleSummary[]>([]);
-
-  constructor() {
-    this.http.get(`${API_BASE}<ArticleSummary[]>('`${API_BASE}/api/content/articles').subscribe(d => this.items.set(d));
-  }
+  // Data fetching declarativo con httpResource() (Angular 21).
+  protected readonly articles = httpResource<ArticleSummary[]>(
+    () => `${API_BASE}/api/content/articles`, { defaultValue: [] as ArticleSummary[] },
+  );
 }

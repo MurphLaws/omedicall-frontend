@@ -7,7 +7,7 @@ Sandbox de **entrenamiento** para Sesión 3 "Claude Code para Developers" (Innov
 - **Angular 21** · **zoneless** (`provideZonelessChangeDetection()`) · **standalone everywhere**
 - **Signals-first** con `signal()`, `computed()`, `.asReadonly()`
 - **Control flow nativo** — `@if/@for/@switch/@defer` (NUNCA `*ngIf/*ngFor/*ngSwitch`)
-- **Data fetching con `HttpClient`** directo (subscriptions finales en templates y constructores)
+- **Data fetching con `httpResource()`** (Angular 21) — lecturas declarativas; mutaciones (login, marcar leída) con `HttpClient`
 - **NgRx SignalStore** (`@ngrx/signals`) para AuthStore — estado global de autenticación
 - **Vitest** como test runner (no Karma/Jasmine)
 - Rutas con lazy `loadComponent`; JWT via `auth.interceptor.ts` (excluye `/api/auth/login`)
@@ -22,9 +22,9 @@ Sandbox de **entrenamiento** para Sesión 3 "Claude Code para Developers" (Innov
 
 ## Patrón a seguir
 
-Componentes `standalone` con `template` inline, `HttpClient` en constructor,
-`signal()` para estado local, `@if/@for/@switch/@defer` nativo.
-**NO** `.subscribe()` anidados; termina en el template o en el constructor/método.
+Componentes `standalone` con `template` inline, `httpResource()` para lecturas,
+`signal()`/`computed()` para estado local, `@if/@for/@switch/@defer` nativo.
+**NO** `.subscribe()` para lecturas (usa `httpResource().value()`); `HttpClient` solo para mutaciones (POST).
 **NO** `effect()` para sincronización (usa `computed()`).
 
 ## ⚠️ Features RESERVADAS del Sprint 1 (NO implementadas)
@@ -62,6 +62,6 @@ npm run build      # producción
 
 - Español neutro en textos visibles; sin voseo
 - `CommonModule` importado en cada componente que use `@for/@if/@switch`
-- HTTP calls via `HttpClient`, inyectado en constructor
+- Lecturas via `httpResource()`; mutaciones via `HttpClient` (requiere `provideHttpClient(withFetch())`)
 - Auth via `AuthStore` (SignalStore), inyectado donde sea necesario
 - Tipado fuerte en signals: `signal<T>(initialValue)`

@@ -1,7 +1,7 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { httpResource } from '@angular/common/http';
 import { DoctorSummary, Specialty } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
 import { SpecialtyIcon } from '../../shared/specialty-icon';
@@ -370,15 +370,19 @@ import { API_BASE } from '../../core/config';
   `,
 })
 export class Landing {
-  private readonly http = inject(HttpClient);
   protected readonly stock = STOCK;
 
-  private readonly specialties = signal<Specialty[]>([]);
-  private readonly doctors = signal<DoctorSummary[]>([]);
+  // Data fetching declarativo con httpResource() (Angular 21).
+  private readonly specialtiesRes = httpResource<Specialty[]>(
+    () => `${API_BASE}/api/catalog/specialties`, { defaultValue: [] as Specialty[] },
+  );
+  private readonly doctorsRes = httpResource<DoctorSummary[]>(
+    () => `${API_BASE}/api/providers`, { defaultValue: [] as DoctorSummary[] },
+  );
 
-  protected readonly topSpecialties = computed(() => this.specialties().slice(0, 8));
+  protected readonly topSpecialties = computed(() => this.specialtiesRes.value().slice(0, 8));
   protected readonly featuredDoctors = computed(() =>
-    [...this.doctors()].sort((a, b) => b.ratingAverage - a.ratingAverage).slice(0, 3),
+    [...this.doctorsRes.value()].sort((a, b) => b.ratingAverage - a.ratingAverage).slice(0, 3),
   );
 
   protected readonly heroAvatars = [
@@ -416,13 +420,6 @@ export class Landing {
     { name: 'Andrea Ruiz', city: 'Cali', text: 'Encontré pediatra para mi hijo en minutos. La plataforma es clarísima y confiable.',
       avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=120&q=70' },
   ];
-
-  constructor() {
-    this.http.get<Specialty[]>(`${API_BASE}/api/catalog/specialties`)
-      .subscribe(d => this.specialties.set(d));
-    this.http.get<DoctorSummary[]>(`${API_BASE}/api/providers`)
-      .subscribe(d => this.doctors.set(d));
-  }
 
   protected photo(d: DoctorSummary): string {
     return doctorPhoto(d.id, isFemaleName(d.fullName));
