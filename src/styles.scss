@@ -1,0 +1,76 @@
+/* Tema global OMEDICALL — paleta médica (teal/azul), tipografía y utilidades. */
+:root {
+  --teal: #0aa3a3;
+  --teal-dark: #07807f;
+  --ink: #143642;
+  --muted: #5b7280;
+  --bg: #f4f7f9;
+  --card: #ffffff;
+  --line: #e3eaee;
+  --warn: #e9a23b;
+  --radius: 14px;
+  --shadow: 0 6px 20px rgba(20, 54, 66, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.55;
+}
+
+h1, h2, h3 { line-height: 1.2; margin: 0 0 0.5rem; }
+a { color: var(--teal-dark); text-decoration: none; }
+
+.container { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
+.section { padding: 3rem 0; }
+.muted { color: var(--muted); }
+.center { text-align: center; }
+
+.grid { display: grid; gap: 1.25rem; }
+.grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card .pad { padding: 1.1rem 1.2rem; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  border: 1px solid transparent; border-radius: 10px;
+  padding: .55rem 1rem; font-size: .95rem; font-weight: 600;
+  cursor: pointer; transition: .15s;
+}
+.btn-primary { background: var(--teal); color: #fff; }
+.btn-primary:hover { background: var(--teal-dark); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { background: #eef3f5; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+
+.badge {
+  display: inline-block; padding: .2rem .6rem; border-radius: 999px;
+  background: #e6f6f6; color: var(--teal-dark); font-size: .78rem; font-weight: 600;
+}
+
+.input {
+  width: 100%; padding: .65rem .8rem; border: 1px solid var(--line);
+  border-radius: 10px; font-size: 1rem; background: #fff;
+}
+.input:focus { outline: 2px solid #bfe7e7; border-color: var(--teal); }
+
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-weight: 600; margin-bottom: .35rem; font-size: .9rem; }
+
+.error { color: #c0392b; font-size: .9rem; }

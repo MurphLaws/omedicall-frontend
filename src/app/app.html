@@ -1,0 +1,30 @@
+<header class="topbar">
+  <a class="brand" routerLink="/">
+    <span class="brand-mark">+</span> OMEDICALL
+  </a>
+
+  <nav class="nav">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+    <a routerLink="/especialidades" routerLinkActive="active">Especialidades</a>
+    <a routerLink="/medicos" routerLinkActive="active">Médicos</a>
+    <a routerLink="/blog" routerLinkActive="active">Blog</a>
+  </nav>
+
+  <div class="actions">
+    @if (auth.isAuthenticated()) {
+      <a routerLink="/dashboard" routerLinkActive="active" class="btn btn-ghost">Mi panel</a>
+      <span class="user">{{ auth.user()?.fullName }}</span>
+      <button class="btn btn-ghost" (click)="logout()">Salir</button>
+    } @else {
+      <a routerLink="/login" class="btn btn-primary">Ingresar</a>
+    }
+  </div>
+</header>
+
+<main class="main">
+  <router-outlet />
+</main>
+
+<footer class="footer">
+  <span>OMEDICALL · plataforma de telemedicina (entorno de práctica)</span>
+</footer>

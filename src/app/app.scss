@@ -1,0 +1,32 @@
+:host { display: flex; flex-direction: column; min-height: 100vh; }
+
+.topbar {
+  display: flex; align-items: center; gap: 1.5rem;
+  padding: .8rem 1.25rem; background: #fff; border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 10;
+}
+
+.brand { display: flex; align-items: center; gap: .5rem; font-weight: 800; font-size: 1.2rem; color: var(--ink); }
+.brand-mark {
+  display: inline-grid; place-items: center; width: 28px; height: 28px;
+  background: var(--teal); color: #fff; border-radius: 8px; font-weight: 900;
+}
+
+.nav { display: flex; gap: 1.1rem; margin-left: .5rem; }
+.nav a { color: var(--muted); font-weight: 600; padding: .3rem 0; border-bottom: 2px solid transparent; }
+.nav a:hover { color: var(--ink); }
+.nav a.active { color: var(--teal-dark); border-bottom-color: var(--teal); }
+
+.actions { margin-left: auto; display: flex; align-items: center; gap: .6rem; }
+.actions .user { font-weight: 600; font-size: .9rem; color: var(--ink); }
+
+.main { flex: 1; }
+
+.footer {
+  padding: 1.5rem; text-align: center; color: var(--muted); font-size: .85rem;
+  border-top: 1px solid var(--line); background: #fff;
+}
+
+@media (max-width: 720px) {
+  .nav { display: none; }
+}
