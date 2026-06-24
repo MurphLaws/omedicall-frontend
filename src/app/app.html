@@ -1,23 +1,31 @@
 <header class="topbar">
-  <a class="brand" routerLink="/">
-    <span class="brand-mark">+</span> OMEDICALL
-  </a>
+  <div class="topbar-inner container">
+    <a class="brand" routerLink="/">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </span>
+      <span class="brand-name">OMEDICALL</span>
+    </a>
 
-  <nav class="nav">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
-    <a routerLink="/especialidades" routerLinkActive="active">Especialidades</a>
-    <a routerLink="/medicos" routerLinkActive="active">Médicos</a>
-    <a routerLink="/blog" routerLinkActive="active">Blog</a>
-  </nav>
+    <nav class="nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+      <a routerLink="/especialidades" routerLinkActive="active">Especialidades</a>
+      <a routerLink="/medicos" routerLinkActive="active">Médicos</a>
+      <a routerLink="/blog" routerLinkActive="active">Blog de salud</a>
+    </nav>
 
-  <div class="actions">
-    @if (auth.isAuthenticated()) {
-      <a routerLink="/dashboard" routerLinkActive="active" class="btn btn-ghost">Mi panel</a>
-      <span class="user">{{ auth.user()?.fullName }}</span>
-      <button class="btn btn-ghost" (click)="logout()">Salir</button>
-    } @else {
-      <a routerLink="/login" class="btn btn-primary">Ingresar</a>
-    }
+    <div class="actions">
+      @if (auth.isAuthenticated()) {
+        <a routerLink="/dashboard" routerLinkActive="active" class="btn btn-ghost">Mi panel</a>
+        <span class="user">{{ auth.user()?.fullName }}</span>
+        <button class="btn btn-ghost" (click)="logout()">Salir</button>
+      } @else {
+        <a routerLink="/login" class="login-link">Ingresar</a>
+        <a routerLink="/medicos" class="btn btn-primary">Agendar cita</a>
+      }
+    </div>
   </div>
 </header>
 
@@ -26,5 +34,56 @@
 </main>
 
 <footer class="footer">
-  <span>OMEDICALL · plataforma de telemedicina (entorno de práctica)</span>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" routerLink="/">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </span>
+          <span class="brand-name">OMEDICALL</span>
+        </a>
+        <p class="muted">
+          Telemedicina y citas médicas con especialistas verificados. Tu salud,
+          más cerca y a tiempo.
+        </p>
+        <p class="compliance">Datos protegidos · Ley 1581 de Habeas Data · Atención 24/7</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Plataforma</h4>
+        <a routerLink="/medicos">Buscar médicos</a>
+        <a routerLink="/especialidades">Especialidades</a>
+        <a routerLink="/blog">Blog de salud</a>
+        <a routerLink="/login">Ingresar</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Especialidades</h4>
+        <a routerLink="/especialidades">Cardiología</a>
+        <a routerLink="/especialidades">Pediatría</a>
+        <a routerLink="/especialidades">Dermatología</a>
+        <a routerLink="/especialidades">Psiquiatría</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <span class="muted">Línea nacional</span>
+        <a href="tel:018000123456">01 8000 123 456</a>
+        <span class="muted">Lun a Dom · 24 horas</span>
+        <a href="mailto:hola@omedicall.co">hola&#64;omedicall.co</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 OMEDICALL · Plataforma de telemedicina (entorno de práctica)</span>
+      <span class="footer-legal">
+        <a routerLink="/">Términos</a>
+        <a routerLink="/">Privacidad</a>
+        <a routerLink="/">Política de cookies</a>
+      </span>
+    </div>
+  </div>
 </footer>

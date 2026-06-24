@@ -1,76 +1,173 @@
-/* Tema global OMEDICALL — paleta médica (teal/azul), tipografía y utilidades. */
+/* ============================================================================
+   OMEDICALL — sistema de diseño global
+   Paleta médica teal/navy, tipografía Lexend + Inter, superficies y sombras.
+   ========================================================================== */
 :root {
-  --teal: #0aa3a3;
-  --teal-dark: #07807f;
-  --ink: #143642;
-  --muted: #5b7280;
-  --bg: #f4f7f9;
-  --card: #ffffff;
-  --line: #e3eaee;
-  --warn: #e9a23b;
-  --radius: 14px;
-  --shadow: 0 6px 20px rgba(20, 54, 66, 0.08);
+  /* Marca */
+  --brand: #10a3a0;
+  --brand-600: #0c8a87;
+  --brand-700: #0a716f;
+  --brand-800: #075856;
+  --brand-050: #e8f6f5;
+  --brand-100: #cdeceb;
+
+  /* Tinta / texto */
+  --ink: #0f2a36;
+  --ink-soft: #34505c;
+  --muted: #647d89;
+
+  /* Superficies */
+  --bg: #f4f8f9;
+  --surface: #ffffff;
+  --surface-2: #eef5f6;
+  --line: #e3edef;
+  --line-strong: #cedde1;
+
+  /* Acentos */
+  --accent: #ff7a59;
+  --star: #f5a524;
+  --ok: #16a06a;
+  --ok-050: #e6f6ee;
+
+  /* Forma */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --maxw: 1160px;
+
+  /* Sombras por capas */
+  --shadow-sm: 0 1px 2px rgba(15, 42, 54, .06), 0 2px 4px rgba(15, 42, 54, .04);
+  --shadow: 0 10px 28px -10px rgba(15, 42, 54, .14), 0 3px 10px -4px rgba(15, 42, 54, .07);
+  --shadow-lg: 0 28px 56px -20px rgba(15, 42, 54, .26);
 }
 
 * { box-sizing: border-box; }
-
 html, body { height: 100%; }
+html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: var(--ink);
   background: var(--bg);
-  line-height: 1.55;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3 { line-height: 1.2; margin: 0 0 0.5rem; }
-a { color: var(--teal-dark); text-decoration: none; }
+h1, h2, h3, h4 {
+  font-family: 'Lexend', 'Inter', system-ui, sans-serif;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  margin: 0 0 .5rem;
+  color: var(--ink);
+  font-weight: 700;
+}
+h1 { font-size: clamp(2rem, 4.2vw, 3.1rem); }
+h2 { font-size: clamp(1.55rem, 2.6vw, 2.1rem); }
+h3 { font-size: 1.12rem; }
 
-.container { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
-.section { padding: 3rem 0; }
+p { margin: 0 0 1rem; }
+a { color: var(--brand-700); text-decoration: none; transition: color .15s; }
+a:hover { color: var(--brand-800); }
+img { display: block; max-width: 100%; }
+
+/* Layout ------------------------------------------------------------------ */
+.container { max-width: var(--maxw); margin: 0 auto; padding: 0 1.5rem; }
+.section { padding: clamp(3rem, 6vw, 5rem) 0; }
+.section-tight { padding: clamp(2rem, 4vw, 3rem) 0; }
 .muted { color: var(--muted); }
 .center { text-align: center; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-family: 'Lexend', sans-serif; font-weight: 600; font-size: .8rem;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--brand-700);
+}
+.lead { font-size: 1.1rem; color: var(--ink-soft); max-width: 60ch; }
+.section-head { max-width: 62ch; margin: 0 auto 2.5rem; text-align: center; }
+.section-head .lead { margin: 0 auto; }
 
-.grid { display: grid; gap: 1.25rem; }
+.grid { display: grid; gap: 1.5rem; }
+.grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
 .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
 .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-@media (max-width: 900px) { .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; } }
+@media (max-width: 920px) {
+  .grid.cols-3, .grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; }
+}
 
+/* Cards ------------------------------------------------------------------- */
 .card {
-  background: var(--card);
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
-.card .pad { padding: 1.1rem 1.2rem; }
+.card.hoverable:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--brand-100); }
+.card .pad { padding: 1.25rem 1.35rem; }
 
+/* Buttons ----------------------------------------------------------------- */
 .btn {
-  display: inline-flex; align-items: center; gap: .4rem;
-  border: 1px solid transparent; border-radius: 10px;
-  padding: .55rem 1rem; font-size: .95rem; font-weight: 600;
-  cursor: pointer; transition: .15s;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  border: 1px solid transparent; border-radius: 999px;
+  padding: .7rem 1.25rem; font-family: 'Lexend', sans-serif;
+  font-size: .95rem; font-weight: 600; line-height: 1;
+  cursor: pointer; transition: all .16s ease; white-space: nowrap;
 }
-.btn-primary { background: var(--teal); color: #fff; }
-.btn-primary:hover { background: var(--teal-dark); }
-.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
-.btn-ghost:hover { background: #eef3f5; }
-.btn:disabled { opacity: .6; cursor: not-allowed; }
+.btn svg { width: 1.05em; height: 1.05em; }
+.btn-primary {
+  background: linear-gradient(180deg, var(--brand) 0%, var(--brand-600) 100%);
+  color: #fff; box-shadow: 0 6px 16px -6px rgba(12, 138, 135, .6);
+}
+.btn-primary:hover { color: #fff; transform: translateY(-1px); box-shadow: 0 10px 22px -8px rgba(12, 138, 135, .7); }
+.btn-ghost { background: var(--surface); color: var(--ink); border-color: var(--line-strong); }
+.btn-ghost:hover { background: var(--surface-2); border-color: var(--brand-100); color: var(--ink); }
+.btn-light { background: rgba(255, 255, 255, .15); color: #fff; border-color: rgba(255, 255, 255, .4); }
+.btn-light:hover { background: rgba(255, 255, 255, .25); color: #fff; }
+.btn-lg { padding: .9rem 1.6rem; font-size: 1.02rem; }
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 
+/* Badges & chips ---------------------------------------------------------- */
 .badge {
-  display: inline-block; padding: .2rem .6rem; border-radius: 999px;
-  background: #e6f6f6; color: var(--teal-dark); font-size: .78rem; font-weight: 600;
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .28rem .7rem; border-radius: 999px;
+  background: var(--brand-050); color: var(--brand-700);
+  font-size: .78rem; font-weight: 600; letter-spacing: .01em;
 }
+.chip {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .3rem .7rem; border-radius: 999px;
+  background: var(--surface-2); color: var(--ink-soft);
+  font-size: .8rem; font-weight: 500;
+}
+.pill-ok {
+  display: inline-flex; align-items: center; gap: .35rem;
+  color: var(--ok); font-size: .82rem; font-weight: 600;
+}
+.pill-ok::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
 
+/* Forms ------------------------------------------------------------------- */
 .input {
-  width: 100%; padding: .65rem .8rem; border: 1px solid var(--line);
-  border-radius: 10px; font-size: 1rem; background: #fff;
+  width: 100%; padding: .75rem .9rem; border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm); font-size: 1rem; font-family: inherit;
+  background: #fff; color: var(--ink); transition: border-color .15s, box-shadow .15s;
 }
-.input:focus { outline: 2px solid #bfe7e7; border-color: var(--teal); }
-
-.field { margin-bottom: 1rem; }
-.field label { display: block; font-weight: 600; margin-bottom: .35rem; font-size: .9rem; }
-
+.input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-050); }
+.field { margin-bottom: 1.1rem; }
+.field label { display: block; font-weight: 600; margin-bottom: .4rem; font-size: .9rem; color: var(--ink-soft); }
 .error { color: #c0392b; font-size: .9rem; }
+
+/* Icon tile (especialidades, pasos) -------------------------------------- */
+.icon-tile {
+  display: inline-grid; place-items: center;
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--brand-050); color: var(--brand-700);
+}
+.icon-tile svg { width: 26px; height: 26px; }
+
+/* Estrellas de valoración */
+.stars { color: var(--star); font-weight: 700; letter-spacing: .02em; }

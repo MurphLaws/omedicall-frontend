@@ -1,27 +1,35 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/http/api.service';
 import { Specialty } from '../../core/models/models';
-
-const ICONS: Record<string, string> = {
-  heart: '❤️', baby: '👶', brain: '🧠', skin: '🧴', stethoscope: '🩺',
-  female: '🌸', nerve: '⚡', bone: '🦴', apple: '🍎', eye: '👁️',
-};
+import { SpecialtyIcon } from '../../shared/specialty-icon';
 
 @Component({
   selector: 'app-specialties',
+  imports: [RouterLink, SpecialtyIcon],
   template: `
-    <section class="section">
+    <section class="page-head">
       <div class="container">
-        <h2>Especialidades</h2>
-        <p class="muted">Explora las áreas médicas disponibles en OMEDICALL.</p>
+        <span class="eyebrow">Áreas médicas</span>
+        <h1>Especialidades</h1>
+        <p class="lead">Explora las áreas médicas disponibles en OMEDICALL y encuentra la atención que necesitas.</p>
+      </div>
+    </section>
 
-        <div class="grid cols-3" style="margin-top:1.5rem">
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="grid cols-3">
           @for (s of items(); track s.id) {
-            <div class="card pad spec">
-              <div class="icon">{{ icon(s.iconKey) }}</div>
-              <h3>{{ s.name }}</h3>
-              <p class="muted">{{ s.description }}</p>
-            </div>
+            <a routerLink="/medicos" class="card hoverable spec">
+              <span class="icon-tile"><app-specialty-icon [key]="s.iconKey" /></span>
+              <div>
+                <h3>{{ s.name }}</h3>
+                <p class="muted">{{ s.description }}</p>
+                <span class="spec-link">Ver médicos
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </span>
+              </div>
+            </a>
           } @empty {
             <p class="muted">Cargando especialidades…</p>
           }
@@ -30,9 +38,20 @@ const ICONS: Record<string, string> = {
     </section>
   `,
   styles: `
-    .spec .icon { font-size: 1.8rem; }
-    .spec h3 { margin-top: .4rem; }
-  `
+    .page-head { background: linear-gradient(180deg, var(--brand-050), var(--bg)); padding: clamp(2.5rem, 5vw, 4rem) 0 2.5rem; }
+    .page-head .lead { margin-top: .5rem; }
+
+    .spec { display: flex; gap: 1rem; align-items: flex-start; padding: 1.5rem 1.4rem; }
+    .spec .icon-tile { flex: none; }
+    .spec h3 { margin-bottom: .35rem; }
+    .spec p { font-size: .92rem; margin: 0 0 .75rem; }
+    .spec-link {
+      display: inline-flex; align-items: center; gap: .35rem;
+      font-family: 'Lexend', sans-serif; font-weight: 600; font-size: .88rem; color: var(--brand-700);
+    }
+    .spec-link svg { width: 16px; height: 16px; transition: transform .16s; }
+    .spec:hover .spec-link svg { transform: translateX(3px); }
+  `,
 })
 export class Specialties {
   private readonly api = inject(ApiService);
@@ -40,9 +59,5 @@ export class Specialties {
 
   constructor() {
     this.api.get<Specialty[]>('/api/catalog/specialties').subscribe(d => this.items.set(d));
-  }
-
-  icon(key: string): string {
-    return ICONS[key] ?? '🩺';
   }
 }

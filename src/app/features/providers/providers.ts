@@ -1,35 +1,50 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/http/api.service';
 import { DoctorSummary } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
+import { doctorPhoto, isFemaleName } from '../../shared/stock-images';
 
 @Component({
   selector: 'app-providers',
-  imports: [ImgFallbackDirective],
+  imports: [RouterLink, ImgFallbackDirective],
   template: `
-    <section class="section">
+    <section class="page-head">
       <div class="container">
-        <h2>Médicos</h2>
-        <p class="muted">Directorio de profesionales. (La búsqueda por filtros y el perfil completo llegan pronto.)</p>
+        <span class="eyebrow">Directorio médico</span>
+        <h1>Encuentra a tu especialista</h1>
+        <p class="lead">{{ items().length }} profesionales verificados, listos para atenderte presencial o por telemedicina.</p>
+      </div>
+    </section>
 
-        <div class="grid cols-3" style="margin-top:1.5rem">
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="grid cols-3">
           @for (d of items(); track d.id) {
-            <div class="card doc">
-              <img class="photo" [src]="d.photoUrl" [fallback]="'doctor-' + d.id" [alt]="d.fullName" />
+            <div class="card hoverable doc">
+              <div class="doc-photo">
+                <img [src]="photo(d)" [fallback]="'doc-' + d.id" [alt]="d.fullName" />
+                @if (d.isAcceptingPatients) {
+                  <span class="doc-flag ok">Acepta pacientes</span>
+                } @else {
+                  <span class="doc-flag off">Sin cupos</span>
+                }
+              </div>
               <div class="pad">
-                <div class="row">
+                <div class="doc-top">
                   <h3>{{ d.fullName }}</h3>
-                  <span class="rating">★ {{ d.ratingAverage.toFixed(1) }}</span>
+                  <span class="stars">★ {{ d.ratingAverage.toFixed(1) }}</span>
                 </div>
                 <span class="badge">{{ d.primarySpecialtyName }}</span>
-                <p class="muted loc">{{ d.locationName }}</p>
-                <div class="foot">
-                  <span class="fee">{{ money(d.consultationFee) }}</span>
-                  @if (d.isAcceptingPatients) {
-                    <span class="open">Acepta pacientes</span>
-                  } @else {
-                    <span class="closed">Sin cupos</span>
-                  }
+                <p class="muted doc-loc">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />
+                  </svg>
+                  {{ d.locationName }}
+                </p>
+                <div class="doc-foot">
+                  <span class="fee-wrap"><small class="muted">Consulta desde</small><span class="fee">{{ money(d.consultationFee) }}</span></span>
+                  <a routerLink="/medicos" class="btn btn-primary" [class.btn-disabled]="!d.isAcceptingPatients">Agendar</a>
                 </div>
               </div>
             </div>
@@ -41,15 +56,28 @@ import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
     </section>
   `,
   styles: `
-    .doc .photo { width: 100%; height: 200px; object-fit: cover; }
-    .doc .row { display: flex; justify-content: space-between; align-items: center; }
-    .doc .rating { color: var(--warn); font-weight: 700; }
-    .doc .loc { margin: .4rem 0 .6rem; }
-    .doc .foot { display: flex; justify-content: space-between; align-items: center; }
-    .doc .fee { font-weight: 700; }
-    .open { color: var(--teal-dark); font-size: .82rem; font-weight: 600; }
-    .closed { color: var(--muted); font-size: .82rem; }
-  `
+    .page-head { background: linear-gradient(180deg, var(--brand-050), var(--bg)); padding: clamp(2.5rem, 5vw, 4rem) 0 2.5rem; }
+    .page-head .lead { margin-top: .5rem; }
+
+    .doc-photo { position: relative; }
+    .doc-photo img { width: 100%; height: 240px; object-fit: cover; }
+    .doc-flag {
+      position: absolute; top: .75rem; left: .75rem; font-size: .76rem; font-weight: 600;
+      padding: .25rem .65rem; border-radius: 999px; background: rgba(255,255,255,.95); box-shadow: var(--shadow-sm);
+    }
+    .doc-flag.ok { color: var(--ok); }
+    .doc-flag.off { color: var(--muted); }
+    .doc-top { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
+    .doc-top h3 { margin: 0; font-size: 1.08rem; }
+    .doc-loc { display: flex; align-items: center; gap: .35rem; margin: .65rem 0 1rem; font-size: .9rem; }
+    .doc-loc svg { width: 16px; height: 16px; color: var(--muted); flex: none; }
+    .doc-foot { display: flex; justify-content: space-between; align-items: flex-end; }
+    .fee-wrap { display: flex; flex-direction: column; }
+    .fee-wrap small { font-size: .72rem; }
+    .doc-foot .fee { font-family: 'Lexend', sans-serif; font-weight: 700; font-size: 1.1rem; }
+    .doc-foot .btn { padding: .55rem 1.1rem; font-size: .9rem; }
+    .btn-disabled { opacity: .55; pointer-events: none; filter: grayscale(.3); }
+  `,
 })
 export class Providers {
   private readonly api = inject(ApiService);
@@ -59,7 +87,11 @@ export class Providers {
     this.api.get<DoctorSummary[]>('/api/providers').subscribe(d => this.items.set(d));
   }
 
-  money(value: number): string {
+  protected photo(d: DoctorSummary): string {
+    return doctorPhoto(d.id, isFemaleName(d.fullName));
+  }
+
+  protected money(value: number): string {
     return '$ ' + value.toLocaleString('es-CO');
   }
 }

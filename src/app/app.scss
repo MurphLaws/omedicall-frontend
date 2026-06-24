@@ -1,32 +1,83 @@
 :host { display: flex; flex-direction: column; min-height: 100vh; }
 
-.topbar {
-  display: flex; align-items: center; gap: 1.5rem;
-  padding: .8rem 1.25rem; background: #fff; border-bottom: 1px solid var(--line);
-  position: sticky; top: 0; z-index: 10;
-}
-
-.brand { display: flex; align-items: center; gap: .5rem; font-weight: 800; font-size: 1.2rem; color: var(--ink); }
+/* Marca (header + footer) */
+.brand { display: inline-flex; align-items: center; gap: .6rem; font-weight: 800; }
+.brand-name { font-family: 'Lexend', sans-serif; font-size: 1.25rem; letter-spacing: -.02em; }
 .brand-mark {
-  display: inline-grid; place-items: center; width: 28px; height: 28px;
-  background: var(--teal); color: #fff; border-radius: 8px; font-weight: 900;
+  display: inline-grid; place-items: center; width: 34px; height: 34px;
+  background: linear-gradient(140deg, var(--brand) 0%, var(--brand-700) 100%);
+  color: #fff; border-radius: 10px; box-shadow: 0 4px 10px -3px rgba(10, 113, 111, .5);
+}
+.brand-mark svg { width: 20px; height: 20px; }
+
+/* Topbar ------------------------------------------------------------------ */
+.topbar {
+  background: rgba(255, 255, 255, .88);
+  backdrop-filter: saturate(180%) blur(10px);
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-inner { display: flex; align-items: center; gap: 1.75rem; height: 68px; }
+.topbar .brand { color: var(--ink); }
+
+.nav { display: flex; gap: 1.5rem; }
+.nav a {
+  color: var(--ink-soft); font-family: 'Lexend', sans-serif; font-weight: 500;
+  font-size: .95rem; padding: .35rem 0; position: relative;
+}
+.nav a:hover { color: var(--ink); }
+.nav a.active { color: var(--brand-700); }
+.nav a.active::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -22px; height: 3px;
+  background: var(--brand); border-radius: 3px 3px 0 0;
 }
 
-.nav { display: flex; gap: 1.1rem; margin-left: .5rem; }
-.nav a { color: var(--muted); font-weight: 600; padding: .3rem 0; border-bottom: 2px solid transparent; }
-.nav a:hover { color: var(--ink); }
-.nav a.active { color: var(--teal-dark); border-bottom-color: var(--teal); }
-
-.actions { margin-left: auto; display: flex; align-items: center; gap: .6rem; }
+.actions { margin-left: auto; display: flex; align-items: center; gap: .9rem; }
 .actions .user { font-weight: 600; font-size: .9rem; color: var(--ink); }
+.login-link { font-family: 'Lexend', sans-serif; font-weight: 600; font-size: .95rem; color: var(--ink-soft); }
+.login-link:hover { color: var(--brand-700); }
 
 .main { flex: 1; }
 
+/* Footer ------------------------------------------------------------------ */
 .footer {
-  padding: 1.5rem; text-align: center; color: var(--muted); font-size: .85rem;
-  border-top: 1px solid var(--line); background: #fff;
+  background: #0c2630;
+  color: #c4d5da;
+  padding: 3.5rem 0 1.75rem;
+  margin-top: 2rem;
 }
+.footer .brand { color: #fff; margin-bottom: 1rem; }
+.footer-grid {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1.2fr; gap: 2.5rem;
+  padding-bottom: 2.5rem; border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+.footer-brand p { max-width: 36ch; font-size: .92rem; }
+.footer .muted { color: #8aa3ab; }
+.footer-brand .compliance { font-size: .8rem; color: #7e979f; margin: 0; }
+.footer-col { display: flex; flex-direction: column; gap: .65rem; }
+.footer-col h4 {
+  color: #fff; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: .35rem; font-weight: 600;
+}
+.footer-col a, .footer-col span { color: #c4d5da; font-size: .92rem; }
+.footer-col a:hover { color: #fff; }
 
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+  gap: .75rem; padding-top: 1.5rem; font-size: .85rem; color: #8aa3ab;
+}
+.footer-legal { display: flex; gap: 1.25rem; }
+.footer-legal a { color: #8aa3ab; }
+.footer-legal a:hover { color: #fff; }
+
+@media (max-width: 880px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+}
 @media (max-width: 720px) {
   .nav { display: none; }
+  .actions .user { display: none; }
+}
+@media (max-width: 520px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
 }
