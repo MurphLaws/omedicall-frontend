@@ -1,9 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
-import { ApiService } from '../../core/http/api.service';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { ArticleSummary, DoctorSummary, Specialty } from '../../core/models/models';
+import { API_BASE } from '../../core/config';
 
 @Component({
   selector: 'app-admin',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <section class="section">
       <div class="container">
@@ -37,22 +41,25 @@ import { ArticleSummary, DoctorSummary, Specialty } from '../../core/models/mode
   `,
   styles: `
     .stat { display: flex; flex-direction: column; align-items: center; }
-    .stat .n { font-size: 2rem; font-weight: 800; color: var(--teal-dark); }
-    .stat .l { color: var(--muted); }
-    .tbl { width: 100%; border-collapse: collapse; margin-top: .5rem; }
-    .tbl th, .tbl td { text-align: left; padding: .6rem .4rem; border-bottom: 1px solid var(--line); }
-    .tbl th { color: var(--muted); font-size: .85rem; }
+    .stat .n { font-size: 2rem; font-weight: 800; color: var(--brand-700); }
+    .stat .l { font-size: .9rem; color: var(--muted); }
+    .tbl { width: 100%; border-collapse: collapse; }
+    .tbl th { text-align: left; padding: .7rem; border-bottom: 2px solid var(--line); font-weight: 600; }
+    .tbl td { padding: .7rem; border-bottom: 1px solid var(--line); }
   `
 })
 export class Admin {
-  private readonly api = inject(ApiService);
+  private readonly http = inject(HttpClient);
   protected readonly specialties = signal<Specialty[]>([]);
   protected readonly doctors = signal<DoctorSummary[]>([]);
   protected readonly articles = signal<ArticleSummary[]>([]);
 
   constructor() {
-    this.api.get<Specialty[]>('/api/catalog/specialties').subscribe(d => this.specialties.set(d));
-    this.api.get<DoctorSummary[]>('/api/providers').subscribe(d => this.doctors.set(d));
-    this.api.get<ArticleSummary[]>('/api/content/articles').subscribe(d => this.articles.set(d));
+    this.http.get<Specialty[]>(`${API_BASE}/api/catalog/specialties`)
+      .subscribe(d => this.specialties.set(d));
+    this.http.get<DoctorSummary[]>(`${API_BASE}/api/providers`)
+      .subscribe(d => this.doctors.set(d));
+    this.http.get<ArticleSummary[]>(`${API_BASE}/api/content/articles`)
+      .subscribe(d => this.articles.set(d));
   }
 }

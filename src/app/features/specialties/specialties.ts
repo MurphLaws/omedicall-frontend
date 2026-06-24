@@ -1,12 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ApiService } from '../../core/http/api.service';
+import { HttpClient } from '@angular/common/http';
 import { Specialty } from '../../core/models/models';
 import { SpecialtyIcon } from '../../shared/specialty-icon';
+import { API_BASE } from '../../core/config';
 
 @Component({
   selector: 'app-specialties',
-  imports: [RouterLink, SpecialtyIcon],
+  standalone: true,
+  imports: [CommonModule, RouterLink, SpecialtyIcon],
   template: `
     <section class="page-head">
       <div class="container">
@@ -54,10 +57,11 @@ import { SpecialtyIcon } from '../../shared/specialty-icon';
   `,
 })
 export class Specialties {
-  private readonly api = inject(ApiService);
+  private readonly http = inject(HttpClient);
   protected readonly items = signal<Specialty[]>([]);
 
   constructor() {
-    this.api.get<Specialty[]>('/api/catalog/specialties').subscribe(d => this.items.set(d));
+    this.http.get<Specialty[]>(`${API_BASE}/api/catalog/specialties`)
+      .subscribe(d => this.items.set(d));
   }
 }

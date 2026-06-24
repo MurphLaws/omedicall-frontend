@@ -1,41 +1,67 @@
-# OMEDICALL Frontend — guía para Claude Code
+# OMEDICALL Frontend — Angular 21 zoneless + SignalStore
 
-Sandbox de **entrenamiento**: la app web de OMEDICALL (telemedicina). Está deliberadamente
-**incompleta**: las pantallas del Sprint 1 son el ejercicio del participante.
+Sandbox de **entrenamiento** para Sesión 3 "Claude Code para Developers" (Innovaitors).
 
-## Stack
-- **Angular 20** · standalone components (sin NgModules) · **signals** para el estado (sin `BehaviorSubject`)
-- Rutas con lazy `loadComponent` en `src/app/app.routes.ts`
-- HTTP al gateway (`http://localhost:5000`) vía `core/http/api.service.ts`; el JWT lo adjunta `core/auth/auth.interceptor.ts`
-- Imágenes de stock por URL (Unsplash) con fallback automático a `picsum` mediante la directiva `img[fallback]`
+## Stack (Angular 21)
+
+- **Angular 21** · **zoneless** (`provideZonelessChangeDetection()`) · **standalone everywhere**
+- **Signals-first** con `signal()`, `computed()`, `.asReadonly()`
+- **Control flow nativo** — `@if/@for/@switch/@defer` (NUNCA `*ngIf/*ngFor/*ngSwitch`)
+- **Data fetching con `HttpClient`** directo (subscriptions finales en templates y constructores)
+- **NgRx SignalStore** (`@ngrx/signals`) para AuthStore — estado global de autenticación
+- **Vitest** como test runner (no Karma/Jasmine)
+- Rutas con lazy `loadComponent`; JWT via `auth.interceptor.ts` (excluye `/api/auth/login`)
+- Imágenes de stock verificadas (Unsplash) + fallback automático a clínica neutral
 
 ## Estructura
-- `core/` — `auth/` (servicio con signals, guard, interceptor), `http/` (api.service), `models/`, `config.ts`
-- `features/` — `landing`, `auth/login`, `dashboard`, `specialties`, `providers`, `blog` (list + detail), `admin`
-- `shared/` — `img-fallback.directive.ts`, `stock-images.ts`
+
+- `src/app/core/` — auth (store, guard, interceptor), http (removed), models, config
+- `src/app/features/` — landing, auth/login, dashboard, specialties, providers, locations, help, blog (list+detail), admin
+- `src/app/shared/` — specialty-icon.ts, stock-images.ts, img-fallback.directive.ts
+- `src/styles.scss` — paleta médica (teal/navy), Lexend + Inter, sombras por capas
 
 ## Patrón a seguir
-Componentes standalone con `template`/`styles` inline o archivos `.html`/`.scss`. Estado con
-`signal()` + `computed()` + `.asReadonly()`. Datos vía `ApiService` (`get`/`post`). Estilos:
-reusa las clases globales de `src/styles.scss` (`.card`, `.btn`, `.grid`, `.badge`, `.input`).
 
-## ⚠️ Límites del Sprint 1 — NO IMPLEMENTAR (es el ejercicio de la Jornada 2)
-| CU | Pantalla | Estado |
+Componentes `standalone` con `template` inline, `HttpClient` en constructor,
+`signal()` para estado local, `@if/@for/@switch/@defer` nativo.
+**NO** `.subscribe()` anidados; termina en el template o en el constructor/método.
+**NO** `effect()` para sincronización (usa `computed()`).
+
+## ⚠️ Features RESERVADAS del Sprint 1 (NO implementadas)
+
+| CU | Feature | Estado |
 |---|---|---|
-| CU-01 | Registro de paciente | ❌ no existe (ruta comentada en `app.routes.ts`) |
-| CU-02 | Registro de médico | ❌ no existe |
-| CU-03 | Perfil de salud del paciente | ❌ no existe |
-| CU-04 | Búsqueda de médicos por filtros | ❌ `/medicos` solo lista, sin filtros |
-| CU-07 | Perfil completo del médico | ❌ no existe el detalle `/medicos/:id` |
+| CU-01 | Registro de paciente | ❌ |
+| CU-02 | Registro de médico | ❌ |
+| CU-03 | Perfil de salud del paciente | ❌ |
+| CU-04 | Búsqueda por filtros | ❌ |
+| CU-07 | Perfil completo del médico | ❌ |
+| — | Agendamiento de citas | ❌ |
 
-✅ Sí existe: landing, login, panel (dashboard) con notificaciones, listado de especialidades,
-**listado básico** de médicos, blog (lista + detalle), panel admin de solo lectura.
+**Módulos nuevos, completos, independientes de las reservadas:**
+- ✅ **Sedes** (`/sedes`) — lista de ubicaciones con telemedicina
+- ✅ **Centro de Ayuda/FAQ** (`/ayuda`) — acordeón de preguntas frecuentes + contacto
+
+✅ Existe: landing, login, especialidades, médicos (listado básico), blog, dashboard, admin.
 
 ## Cómo correr
-`npm ci && npm start` → `http://localhost:4200` (requiere el backend en `http://localhost:5000`).
-Build de producción: `npm run build`.
+
+```bash
+npm install --legacy-peer-deps
+npm start          # ng serve → http://localhost:4200
+npm test           # vitest (runner)
+npm run build      # producción
+```
+
+**Credenciales demo:**
+- `juan.perez@omedicall.test` / `Demo1234!` — paciente
+- `dra.morales@omedicall.test` / `Demo1234!` — médica
+- `admin@omedicall.test` / `Demo1234!` — admin
 
 ## Convenciones
-- Español neutro en textos visibles. Sin emojis en el código (los emojis de iconos de especialidad
-  son datos de UI, está bien).
-- No romper el patrón signals-first ni introducir NgModules.
+
+- Español neutro en textos visibles; sin voseo
+- `CommonModule` importado en cada componente que use `@for/@if/@switch`
+- HTTP calls via `HttpClient`, inyectado en constructor
+- Auth via `AuthStore` (SignalStore), inyectado donde sea necesario
+- Tipado fuerte en signals: `signal<T>(initialValue)`

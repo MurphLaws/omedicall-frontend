@@ -1,12 +1,14 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ApiService } from '../../core/http/api.service';
-import { AuthService } from '../../core/auth/auth.service';
+import { CommonModule, DatePipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { AuthStore } from '../../core/auth/auth.store';
 import { NotificationDto } from '../../core/models/models';
+import { API_BASE } from '../../core/config';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [DatePipe],
+  standalone: true,
+  imports: [CommonModule, DatePipe],
   template: `
     <section class="section">
       <div class="container">
@@ -56,8 +58,8 @@ import { NotificationDto } from '../../core/models/models';
   `
 })
 export class Dashboard {
-  protected readonly auth = inject(AuthService);
-  private readonly api = inject(ApiService);
+  protected readonly auth = inject(AuthStore);
+  private readonly http = inject(HttpClient);
   protected readonly notifications = signal<NotificationDto[]>([]);
 
   constructor() {
@@ -65,10 +67,12 @@ export class Dashboard {
   }
 
   private load(): void {
-    this.api.get<NotificationDto[]>('/api/notifications/me').subscribe(d => this.notifications.set(d));
+    this.http.get<NotificationDto[]>(`${API_BASE}/api/notifications/me`)
+      .subscribe(d => this.notifications.set(d));
   }
 
-  markRead(id: string): void {
-    this.api.post<void>(`/api/notifications/${id}/read`, {}).subscribe(() => this.load());
+  protected markRead(id: string): void {
+    this.http.post<void>(`${API_BASE}/api/notifications/${id}/read`, {})
+      .subscribe(() => this.load());
   }
 }

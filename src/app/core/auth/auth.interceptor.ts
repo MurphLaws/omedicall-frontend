@@ -1,10 +1,16 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from './auth.service';
+import { AuthStore } from './auth.store';
 
-/** Adjunta el JWT a las llamadas al API. */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = inject(AuthService).token;
+  const store = inject(AuthStore);
+  const token = store.token();
+
+  // NO adjuntar token al propio endpoint de login
+  if (req.url.includes('/api/auth/login')) {
+    return next(req);
+  }
+
   if (token) {
     req = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
   }

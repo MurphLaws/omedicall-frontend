@@ -1,10 +1,9 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthStore } from './auth.store';
 
-/** Protege rutas que requieren sesión iniciada. */
 export const authGuard: CanActivateFn = () => {
-  const auth = inject(AuthService);
+  const auth = inject(AuthStore);
   const router = inject(Router);
   return auth.isAuthenticated() ? true : router.createUrlTree(['/login']);
 };

@@ -13,7 +13,9 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
       <a routerLink="/especialidades" routerLinkActive="active">Especialidades</a>
       <a routerLink="/medicos" routerLinkActive="active">Médicos</a>
-      <a routerLink="/blog" routerLinkActive="active">Blog de salud</a>
+      <a routerLink="/sedes" routerLinkActive="active">Sedes</a>
+      <a routerLink="/blog" routerLinkActive="active">Blog</a>
+      <a routerLink="/ayuda" routerLinkActive="active">Ayuda</a>
     </nav>
 
     <div class="actions">
@@ -23,7 +25,6 @@
         <button class="btn btn-ghost" (click)="logout()">Salir</button>
       } @else {
         <a routerLink="/login" class="login-link">Ingresar</a>
-        <a routerLink="/medicos" class="btn btn-primary">Agendar cita</a>
       }
     </div>
   </div>
@@ -56,16 +57,17 @@
         <h4>Plataforma</h4>
         <a routerLink="/medicos">Buscar médicos</a>
         <a routerLink="/especialidades">Especialidades</a>
+        <a routerLink="/sedes">Sedes</a>
         <a routerLink="/blog">Blog de salud</a>
-        <a routerLink="/login">Ingresar</a>
+        <a routerLink="/ayuda">Centro de ayuda</a>
       </div>
 
       <div class="footer-col">
-        <h4>Especialidades</h4>
-        <a routerLink="/especialidades">Cardiología</a>
-        <a routerLink="/especialidades">Pediatría</a>
-        <a routerLink="/especialidades">Dermatología</a>
-        <a routerLink="/especialidades">Psiquiatría</a>
+        <h4>Información</h4>
+        <a routerLink="/ayuda">Preguntas frecuentes</a>
+        <a href="javascript:void(0)">Términos de servicio</a>
+        <a href="javascript:void(0)">Política de privacidad</a>
+        <a href="javascript:void(0)">Política de cookies</a>
       </div>
 
       <div class="footer-col">
@@ -73,16 +75,16 @@
         <span class="muted">Línea nacional</span>
         <a href="tel:018000123456">01 8000 123 456</a>
         <span class="muted">Lun a Dom · 24 horas</span>
-        <a href="mailto:hola@omedicall.co">hola&#64;omedicall.co</a>
+        <a href="mailto:soporte@omedicall.co">soporte&#64;omedicall.co</a>
       </div>
     </div>
 
     <div class="footer-bottom">
       <span>© 2026 OMEDICALL · Plataforma de telemedicina (entorno de práctica)</span>
       <span class="footer-legal">
-        <a routerLink="/">Términos</a>
-        <a routerLink="/">Privacidad</a>
-        <a routerLink="/">Política de cookies</a>
+        <a href="javascript:void(0)">Términos</a>
+        <a href="javascript:void(0)">Privacidad</a>
+        <a href="javascript:void(0)">Cookies</a>
       </span>
     </div>
   </div>

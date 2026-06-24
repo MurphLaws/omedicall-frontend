@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ApiService } from '../../core/http/api.service';
+import { HttpClient } from '../../core/http/api.service';
 import { ArticleSummary } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
 
@@ -40,10 +40,10 @@ import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
   `
 })
 export class BlogList {
-  private readonly api = inject(ApiService);
+  private readonly api = inject(HttpClient);
   protected readonly items = signal<ArticleSummary[]>([]);
 
   constructor() {
-    this.api.get<ArticleSummary[]>('/api/content/articles').subscribe(d => this.items.set(d));
+    this.http.get(`${API_BASE}<ArticleSummary[]>('`${API_BASE}/api/content/articles').subscribe(d => this.items.set(d));
   }
 }

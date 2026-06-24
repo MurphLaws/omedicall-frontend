@@ -1,14 +1,17 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ApiService } from '../../core/http/api.service';
+import { HttpClient } from '@angular/common/http';
 import { DoctorSummary, Specialty } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
 import { SpecialtyIcon } from '../../shared/specialty-icon';
 import { STOCK, doctorPhoto, isFemaleName } from '../../shared/stock-images';
+import { API_BASE } from '../../core/config';
 
 @Component({
   selector: 'app-landing',
-  imports: [RouterLink, ImgFallbackDirective, SpecialtyIcon],
+  standalone: true,
+  imports: [CommonModule, RouterLink, ImgFallbackDirective, SpecialtyIcon],
   template: `
     <!-- HERO -->
     <section class="hero">
@@ -22,15 +25,10 @@ import { STOCK, doctorPhoto, isFemaleName } from '../../shared/stock-images';
             virtuales y lleva el control de tu atención médica desde un solo lugar.
           </p>
 
-          <form class="search" (submit)="$event.preventDefault()">
-            <span class="search-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
-              </svg>
-            </span>
-            <input class="search-input" type="text" placeholder="Busca por especialidad, síntoma o médico" />
-            <a routerLink="/medicos" class="btn btn-primary">Buscar</a>
-          </form>
+          <div class="cta-row">
+            <a routerLink="/medicos" class="btn btn-primary btn-lg">Ver médicos</a>
+            <a routerLink="/especialidades" class="btn btn-ghost btn-lg">Explorar especialidades</a>
+          </div>
 
           <div class="hero-trust">
             <div class="avatars" aria-hidden="true">
@@ -159,9 +157,8 @@ import { STOCK, doctorPhoto, isFemaleName } from '../../shared/stock-images';
                   </svg>
                   {{ d.locationName }}
                 </p>
-                <div class="doc-foot">
-                  <span class="fee">{{ money(d.consultationFee) }}</span>
-                  <a routerLink="/medicos" class="btn btn-primary">Agendar</a>
+                <div class="doc-meta">
+                  <span class="fee">Consulta desde {{ money(d.consultationFee) }}</span>
                 </div>
               </div>
             </div>
@@ -324,9 +321,11 @@ import { STOCK, doctorPhoto, isFemaleName } from '../../shared/stock-images';
     .doc-top h3 { margin: 0; font-size: 1.05rem; }
     .doc-loc { display: flex; align-items: center; gap: .35rem; margin: .6rem 0 1rem; font-size: .9rem; }
     .doc-loc svg { width: 16px; height: 16px; color: var(--muted); flex: none; }
-    .doc-foot { display: flex; justify-content: space-between; align-items: center; }
-    .doc-foot .fee { font-family: 'Lexend', sans-serif; font-weight: 700; font-size: 1.05rem; }
-    .doc-foot .btn { padding: .55rem 1.1rem; font-size: .9rem; }
+    .doc-meta { display: flex; align-items: center; }
+    .doc-meta .fee { font-family: 'Lexend', sans-serif; font-weight: 700; font-size: 1.05rem; }
+
+    .cta-row { display: flex; gap: 1rem; margin-top: 1.25rem; }
+    .cta-row .btn { flex: 1; }
 
     /* SPLIT (telemedicina) */
     .split { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
@@ -371,7 +370,7 @@ import { STOCK, doctorPhoto, isFemaleName } from '../../shared/stock-images';
   `,
 })
 export class Landing {
-  private readonly api = inject(ApiService);
+  private readonly http = inject(HttpClient);
   protected readonly stock = STOCK;
 
   private readonly specialties = signal<Specialty[]>([]);
@@ -419,8 +418,10 @@ export class Landing {
   ];
 
   constructor() {
-    this.api.get<Specialty[]>('/api/catalog/specialties').subscribe(d => this.specialties.set(d));
-    this.api.get<DoctorSummary[]>('/api/providers').subscribe(d => this.doctors.set(d));
+    this.http.get<Specialty[]>(`${API_BASE}/api/catalog/specialties`)
+      .subscribe(d => this.specialties.set(d));
+    this.http.get<DoctorSummary[]>(`${API_BASE}/api/providers`)
+      .subscribe(d => this.doctors.set(d));
   }
 
   protected photo(d: DoctorSummary): string {

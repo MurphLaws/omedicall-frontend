@@ -1,13 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { ApiService } from '../../core/http/api.service';
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { DoctorSummary } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
 import { doctorPhoto, isFemaleName } from '../../shared/stock-images';
+import { API_BASE } from '../../core/config';
 
 @Component({
   selector: 'app-providers',
-  imports: [RouterLink, ImgFallbackDirective],
+  standalone: true,
+  imports: [CommonModule, ImgFallbackDirective],
   template: `
     <section class="page-head">
       <div class="container">
@@ -42,9 +44,8 @@ import { doctorPhoto, isFemaleName } from '../../shared/stock-images';
                   </svg>
                   {{ d.locationName }}
                 </p>
-                <div class="doc-foot">
+                <div class="doc-meta">
                   <span class="fee-wrap"><small class="muted">Consulta desde</small><span class="fee">{{ money(d.consultationFee) }}</span></span>
-                  <a routerLink="/medicos" class="btn btn-primary" [class.btn-disabled]="!d.isAcceptingPatients">Agendar</a>
                 </div>
               </div>
             </div>
@@ -71,20 +72,19 @@ import { doctorPhoto, isFemaleName } from '../../shared/stock-images';
     .doc-top h3 { margin: 0; font-size: 1.08rem; }
     .doc-loc { display: flex; align-items: center; gap: .35rem; margin: .65rem 0 1rem; font-size: .9rem; }
     .doc-loc svg { width: 16px; height: 16px; color: var(--muted); flex: none; }
-    .doc-foot { display: flex; justify-content: space-between; align-items: flex-end; }
+    .doc-meta { display: flex; align-items: center; }
     .fee-wrap { display: flex; flex-direction: column; }
     .fee-wrap small { font-size: .72rem; }
-    .doc-foot .fee { font-family: 'Lexend', sans-serif; font-weight: 700; font-size: 1.1rem; }
-    .doc-foot .btn { padding: .55rem 1.1rem; font-size: .9rem; }
-    .btn-disabled { opacity: .55; pointer-events: none; filter: grayscale(.3); }
+    .doc-meta .fee { font-family: 'Lexend', sans-serif; font-weight: 700; font-size: 1.1rem; }
   `,
 })
 export class Providers {
-  private readonly api = inject(ApiService);
+  private readonly http = inject(HttpClient);
   protected readonly items = signal<DoctorSummary[]>([]);
 
   constructor() {
-    this.api.get<DoctorSummary[]>('/api/providers').subscribe(d => this.items.set(d));
+    this.http.get<DoctorSummary[]>(`${API_BASE}/api/providers`)
+      .subscribe(d => this.items.set(d));
   }
 
   protected photo(d: DoctorSummary): string {

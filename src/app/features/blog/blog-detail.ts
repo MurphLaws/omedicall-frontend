@@ -1,13 +1,15 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ApiService } from '../../core/http/api.service';
+import { HttpClient } from '@angular/common/http';
 import { ArticleDetail } from '../../core/models/models';
 import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
+import { API_BASE } from '../../core/config';
 
 @Component({
   selector: 'app-blog-detail',
-  imports: [RouterLink, ImgFallbackDirective, DatePipe],
+  standalone: true,
+  imports: [CommonModule, RouterLink, ImgFallbackDirective, DatePipe],
   template: `
     <section class="section">
       <div class="container narrow">
@@ -34,14 +36,15 @@ import { ImgFallbackDirective } from '../../shared/img-fallback.directive';
   `
 })
 export class BlogDetail {
-  private readonly api = inject(ApiService);
+  private readonly http = inject(HttpClient);
   private readonly route = inject(ActivatedRoute);
   protected readonly article = signal<ArticleDetail | null>(null);
 
   constructor() {
     const slug = this.route.snapshot.paramMap.get('slug');
     if (slug) {
-      this.api.get<ArticleDetail>(`/api/content/articles/${slug}`).subscribe(a => this.article.set(a));
+      this.http.get<ArticleDetail>(`${API_BASE}/api/content/articles/${slug}`)
+        .subscribe(a => this.article.set(a));
     }
   }
 }
