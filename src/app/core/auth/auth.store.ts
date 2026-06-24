@@ -31,6 +31,7 @@ try {
 }
 
 export const AuthStore = signalStore(
+  { providedIn: 'root' },
   withState(initialState),
   withMethods((store, http = inject(HttpClient), router = inject(Router)) => ({
     login(email: string, password: string) {
