@@ -13,11 +13,5 @@ export const routes: Routes = [
   { path: 'dashboard', canActivate: [authGuard], loadComponent: () => import('./features/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'admin', canActivate: [authGuard], loadComponent: () => import('./features/admin/admin').then(m => m.Admin) },
 
-  // ── Sprint 1 (ejercicio Jornada 2) — rutas RESERVADAS para el participante ──
-  // { path: 'registro', ... }            // CU-01 Registro de paciente
-  // { path: 'medicos/registro', ... }    // CU-02 Registro de médico
-  // { path: 'perfil-salud', ... }        // CU-03 Perfil de salud del paciente
-  // (CU-04 búsqueda con filtros y CU-07 perfil completo del médico van sobre /medicos)
-
   { path: '**', redirectTo: '' }
 ];

@@ -39,8 +39,8 @@ import { API_BASE } from '../../core/config';
           <div class="card pad">
             <h3>Tu actividad</h3>
             <p class="muted">
-              Aquí verás tus próximas citas y tu historial cuando esas funcionalidades estén
-              disponibles. Por ahora puedes explorar especialidades, médicos, sedes y el blog.
+              Aún no tienes citas programadas. Explora especialidades, médicos y sedes
+              para agendar tu próxima consulta.
             </p>
           </div>
         </div>
