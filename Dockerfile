@@ -10,6 +10,9 @@ RUN sed -i "s#http://localhost:5000#${API_BASE}#g" src/app/core/config.ts
 RUN npm run build
 
 FROM nginx:alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# nginx.conf es una plantilla: la imagen sustituye ${PORT} al arrancar (envsubst).
+# Railway inyecta su propio PORT; localmente cae al valor por defecto de abajo.
+ENV PORT=80
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist/omedicall-frontend/browser /usr/share/nginx/html
 EXPOSE 80
