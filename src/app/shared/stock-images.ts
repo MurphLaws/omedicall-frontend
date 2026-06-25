@@ -26,10 +26,9 @@ const PORTRAITS_F = [
   '1651008376811-b90baee60c1f',
 ];
 const PORTRAITS_M = [
-  '1612349317150-e413f6a5b16d',
-  '1537368910025-700350fe46c7',
-  '1622253692010-333f2da6031d',
-  '1559839914-17aae19cec71',
+  '1645066928295-2506defde470', // médico, bata blanca y corbata
+  '1758691463333-c79215e8bc3b', // médico joven con gafas en consulta
+  '1642975967602-653d378f3b5b', // médico, bata blanca y traje
 ];
 
 function hash(seed: string): number {

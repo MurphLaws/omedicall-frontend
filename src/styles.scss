@@ -105,6 +105,9 @@ img { display: block; max-width: 100%; }
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  /* Fuerza una capa de composición propia: evita el artefacto de esquinas
+     (hijos no recortados por el border-radius) en Chromium/WebKit/Arc. */
+  transform: translateZ(0);
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 .card.hoverable:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--brand-100); }
